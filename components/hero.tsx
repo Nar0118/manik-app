@@ -1,7 +1,29 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setCategory } from "@/store/slices/catalog-slice";
+
+const SLIDES = [
+  {
+    title: "Elegant balloons for stylish celebrations",
+    subtitle: "Hand-picked sets for birthdays, weddings, and premium events.",
+    image:
+      "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=1400&q=80",
+  },
+  {
+    title: "From idea to ready composition",
+    subtitle: "Fast curation, clean design, and inspiring holiday visuals.",
+    image:
+      "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=1400&q=80",
+  },
+  {
+    title: "Collections for every mood",
+    subtitle: "Soft pastel, metallic glam, and playful kids themes.",
+    image:
+      "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=1400&q=80",
+  },
+];
 
 const CATEGORY_CARDS: { label: string; category: string; blurb: string }[] = [
   { label: "Birthday", category: "Birthday", blurb: "Parties & milestones" },
@@ -12,6 +34,15 @@ const CATEGORY_CARDS: { label: string; category: string; blurb: string }[] = [
 
 export function Hero() {
   const dispatch = useDispatch();
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % SLIDES.length);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   function goToCatalog(next: string) {
     dispatch(setCategory(next));
@@ -22,20 +53,41 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-8 sm:px-6 sm:py-10 md:grid-cols-2"
+      className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-8 sm:px-6 sm:py-10 lg:grid-cols-[1.2fr_1fr]"
     >
-      <div className="rounded-3xl bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 p-6 text-white shadow-2xl shadow-cyan-950/20 sm:p-8">
-        <p className="mb-3 inline-flex rounded-full border border-white/40 px-3 py-1 text-xs uppercase tracking-wide">
-          New collection
-        </p>
-        <h1 className="text-3xl font-black leading-tight sm:text-4xl">
-          Stylish balloon sets for unforgettable events
-        </h1>
-        <p className="mt-4 max-w-xl text-sm text-cyan-50">
-          Production-grade e-commerce starter inspired by premium party stores. Fast UI,
-          clean architecture, admin workflows.
-        </p>
-        <div className="mt-6 flex flex-wrap gap-3">
+      <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-[#0f1b3d] p-6 text-white shadow-2xl shadow-cyan-950/20 sm:p-8">
+        <div className="absolute inset-0">
+          {SLIDES.map((slide, index) => (
+            <div
+              key={slide.title}
+              className={`absolute inset-0 transition-opacity duration-700 ${
+                index === activeSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={slide.image}
+                alt=""
+                className="h-full w-full object-cover opacity-35"
+              />
+            </div>
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0f1b3d] via-[#0f1b3dcc] to-[#000000cc]" />
+        </div>
+
+        <div className="relative z-10 animate-fade-in-up">
+          <p className="mb-3 inline-flex rounded-full border border-white/40 px-3 py-1 text-xs uppercase tracking-wide">
+            New collection
+          </p>
+          <h1 className="text-3xl font-black leading-tight sm:text-4xl">
+            {SLIDES[activeSlide]?.title}
+          </h1>
+          <p className="mt-4 max-w-xl text-sm text-cyan-50">
+            {SLIDES[activeSlide]?.subtitle}
+          </p>
+        </div>
+
+        <div className="relative z-10 mt-6 flex flex-wrap gap-3">
           <button
             type="button"
             onClick={() => {
@@ -56,14 +108,31 @@ export function Hero() {
             Shop catalog
           </button>
         </div>
+
+        <div className="relative z-10 mt-6 flex gap-2">
+          {SLIDES.map((slide, index) => (
+            <button
+              key={slide.title}
+              type="button"
+              onClick={() => setActiveSlide(index)}
+              className={`h-2.5 rounded-full transition-all ${
+                activeSlide === index
+                  ? "w-8 bg-white"
+                  : "w-2.5 bg-white/45 hover:bg-white/70"
+              }`}
+              aria-label={`Show slide ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
+
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {CATEGORY_CARDS.map((item) => (
           <button
             key={item.label}
             type="button"
             onClick={() => goToCatalog(item.category)}
-            className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-cyan-300 hover:shadow-md sm:p-6"
+            className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-md sm:p-6"
           >
             <p className="text-xs text-slate-500 sm:text-sm">Category</p>
             <h3 className="mt-1 text-base font-bold text-slate-900 sm:text-xl">

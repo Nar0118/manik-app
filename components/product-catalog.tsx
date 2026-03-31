@@ -57,6 +57,23 @@ export function ProductCatalog({ products }: Props) {
         </select>
       </div>
 
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        {categories.slice(0, 6).map((item) => (
+          <button
+            key={item}
+            type="button"
+            onClick={() => dispatch(setCategory(item))}
+            className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+              category === item
+                ? "bg-slate-900 text-white"
+                : "bg-white text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            {item === "all" ? "All" : item}
+          </button>
+        ))}
+      </div>
+
       {filtered.length === 0 ? (
         <p className="rounded-2xl border border-slate-200 bg-white px-4 py-10 text-center text-sm text-slate-600">
           No products match your filters. Try &quot;All categories&quot; or clear the
@@ -68,30 +85,28 @@ export function ProductCatalog({ products }: Props) {
         {filtered.map((product) => (
           <article
             key={product.id}
-            className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
           >
-            <div className="aspect-[4/3] w-full bg-slate-100">
+            <div className="relative aspect-[4/3] w-full bg-slate-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={product.imageUrl}
                 alt={product.title}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
+              <div className="absolute right-3 top-3 rounded-full bg-white/95 px-2 py-1 text-[11px] font-semibold text-slate-700">
+                {product.inStock ? "In stock" : "Out of stock"}
+              </div>
             </div>
             <div className="space-y-2 p-4">
-              <h3 className="line-clamp-1 text-sm font-bold text-slate-900">
+              <h3 className="line-clamp-2 text-sm font-bold text-slate-900">
                 {product.title}
               </h3>
               <p className="line-clamp-2 text-xs text-slate-500">{product.description}</p>
+              <p className="text-xs font-medium text-cyan-700">{product.category}</p>
               <p className="text-lg font-black text-slate-900">
                 {formatPrice(product.price)}
               </p>
-              <button
-                type="button"
-                className="min-h-11 w-full rounded-xl bg-cyan-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-cyan-600 active:scale-[0.99]"
-              >
-                Add to cart
-              </button>
             </div>
           </article>
         ))}

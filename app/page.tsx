@@ -1,6 +1,7 @@
 import { FeaturedSection } from "@/components/featured-section";
 import { Hero } from "@/components/hero";
 import { ProductCatalog } from "@/components/product-catalog";
+import { WhyChoose } from "@/components/why-choose";
 import { prisma } from "@/lib/prisma";
 import { StoreProvider } from "@/store/provider";
 
@@ -45,6 +46,7 @@ export default async function Home() {
       <StoreProvider>
         <Hero />
         <FeaturedSection products={mapped} />
+        <WhyChoose />
         <ProductCatalog products={mapped} />
       </StoreProvider>
     </div>
