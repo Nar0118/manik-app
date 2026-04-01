@@ -35,7 +35,14 @@ export function ProductCatalog({ products }: Props) {
       id="catalog"
       className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 pb-16 sm:px-6"
     >
-      <h2 className="mb-4 text-2xl font-black text-slate-900 sm:text-3xl">Catalog</h2>
+      <div className="mb-4">
+        <h2 className="font-display text-2xl font-bold text-slate-900 sm:text-3xl">
+          Catalog
+        </h2>
+        <p className="text-sm text-slate-500">
+          Filter, search, and explore every product
+        </p>
+      </div>
       <div className="mb-6 flex flex-col gap-3 md:flex-row">
         <input
           value={query}

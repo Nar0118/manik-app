@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogOut, Menu, UserRound, X } from "lucide-react";
@@ -15,6 +16,7 @@ type Props = {
 
 export function HeaderNav({ user }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   async function handleLogout() {
@@ -24,30 +26,39 @@ export function HeaderNav({ user }: Props) {
     router.refresh();
   }
 
+  const linkClass = "transition hover:text-white text-slate-200";
+  const activeContact = pathname === "/contact";
+
   return (
-    <header className="sticky top-0 z-50 border-b border-white/15 bg-[#0d1325]/95 pt-[env(safe-area-inset-top)] backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-rose-500/20 bg-slate-950/95 pt-[env(safe-area-inset-top)] shadow-lg shadow-rose-950/20 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
         <Link
           href="/"
-          className="shrink-0 text-lg font-black tracking-tight text-white sm:text-xl"
+          className="shrink-0 bg-gradient-to-r from-rose-400 to-cyan-400 bg-clip-text text-lg font-black tracking-tight text-transparent sm:text-xl"
           onClick={() => setOpen(false)}
         >
           MANIK BALLOONS
         </Link>
 
-        <nav className="hidden items-center gap-5 text-sm text-slate-200 md:flex">
-          <Link href="/#featured" className="transition hover:text-white">
+        <nav className="hidden items-center gap-5 text-sm md:flex">
+          <Link href="/#featured" className={linkClass}>
             Featured
           </Link>
-          <Link href="/#catalog" className="transition hover:text-white">
+          <Link href="/#catalog" className={linkClass}>
             Catalog
+          </Link>
+          <Link
+            href="/contact"
+            className={activeContact ? "font-semibold text-white" : linkClass}
+          >
+            Contact
           </Link>
           {!user ? (
             <>
-              <Link href="/register" className="transition hover:text-white">
+              <Link href="/register" className={linkClass}>
                 Sign up
               </Link>
-              <Link href="/login" className="transition hover:text-white">
+              <Link href="/login" className={linkClass}>
                 Login
               </Link>
             </>
@@ -56,7 +67,7 @@ export function HeaderNav({ user }: Props) {
             <>
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 transition hover:bg-white/10 hover:text-white"
+                className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-slate-200 transition hover:bg-white/10 hover:text-white"
                 title={user.email}
               >
                 <UserRound className="size-4 shrink-0" aria-hidden />
@@ -99,13 +110,20 @@ export function HeaderNav({ user }: Props) {
       </div>
 
       {open ? (
-        <div className="border-t border-white/10 bg-[#0d1325] px-4 py-4 md:hidden">
+        <div className="border-t border-white/10 bg-slate-950 px-4 py-4 md:hidden">
           <div className="flex flex-col gap-3 text-sm text-slate-200">
             <Link href="/#featured" className="py-2" onClick={() => setOpen(false)}>
               Featured
             </Link>
             <Link href="/#catalog" className="py-2" onClick={() => setOpen(false)}>
               Catalog
+            </Link>
+            <Link
+              href="/contact"
+              className={`py-2 ${activeContact ? "font-semibold text-white" : ""}`}
+              onClick={() => setOpen(false)}
+            >
+              Contact
             </Link>
             {user ? (
               <>

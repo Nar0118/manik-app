@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setCategory } from "@/store/slices/catalog-slice";
 
@@ -35,6 +35,7 @@ const CATEGORY_CARDS: { label: string; category: string; blurb: string }[] = [
 export function Hero() {
   const dispatch = useDispatch();
   const [activeSlide, setActiveSlide] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -55,7 +56,27 @@ export function Hero() {
       id="hero"
       className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-8 sm:px-6 sm:py-10 lg:grid-cols-[1.2fr_1fr]"
     >
-      <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-[#0f1b3d] p-6 text-white shadow-2xl shadow-cyan-950/20 sm:p-8">
+      <div
+        className="relative overflow-hidden rounded-3xl border border-white/40 bg-[#0f1b3d] p-6 text-white shadow-2xl shadow-cyan-950/20 sm:p-8"
+        onTouchStart={(e) => {
+          touchStartX.current = e.touches[0].clientX;
+        }}
+        onTouchEnd={(e) => {
+          if (touchStartX.current == null) {
+            return;
+          }
+          const dx = e.changedTouches[0].clientX - touchStartX.current;
+          touchStartX.current = null;
+          if (Math.abs(dx) < 48) {
+            return;
+          }
+          if (dx > 0) {
+            setActiveSlide((i) => (i - 1 + SLIDES.length) % SLIDES.length);
+          } else {
+            setActiveSlide((i) => (i + 1) % SLIDES.length);
+          }
+        }}
+      >
         <div className="absolute inset-0">
           {SLIDES.map((slide, index) => (
             <div
@@ -75,11 +96,11 @@ export function Hero() {
           <div className="absolute inset-0 bg-gradient-to-br from-[#0f1b3d] via-[#0f1b3dcc] to-[#000000cc]" />
         </div>
 
-        <div className="relative z-10 animate-fade-in-up">
+        <div className="relative z-10">
           <p className="mb-3 inline-flex rounded-full border border-white/40 px-3 py-1 text-xs uppercase tracking-wide">
             New collection
           </p>
-          <h1 className="text-3xl font-black leading-tight sm:text-4xl">
+          <h1 className="font-display text-3xl font-bold leading-tight transition-opacity duration-500 sm:text-4xl">
             {SLIDES[activeSlide]?.title}
           </h1>
           <p className="mt-4 max-w-xl text-sm text-cyan-50">
@@ -132,7 +153,7 @@ export function Hero() {
             key={item.label}
             type="button"
             onClick={() => goToCatalog(item.category)}
-            className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300 hover:shadow-md sm:p-6"
+            className="rounded-2xl border border-slate-200/90 bg-white p-4 text-left shadow-[var(--shadow-card)] transition duration-300 hover:-translate-y-0.5 hover:border-[var(--brand-primary)]/40 hover:shadow-lg sm:p-6"
           >
             <p className="text-xs text-slate-500 sm:text-sm">Category</p>
             <h3 className="mt-1 text-base font-bold text-slate-900 sm:text-xl">

@@ -1,6 +1,9 @@
+import { ContactStrip } from "@/components/contact-strip";
 import { FeaturedSection } from "@/components/featured-section";
 import { Hero } from "@/components/hero";
 import { ProductCatalog } from "@/components/product-catalog";
+import { StatsStrip } from "@/components/stats-strip";
+import { TestimonialsCarousel } from "@/components/testimonials-carousel";
 import { WhyChoose } from "@/components/why-choose";
 import { prisma } from "@/lib/prisma";
 import { StoreProvider } from "@/store/provider";
@@ -35,7 +38,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       {dbError ? (
         <div className="mx-auto max-w-7xl px-4 pt-4 sm:px-6">
           <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
@@ -45,9 +48,12 @@ export default async function Home() {
       ) : null}
       <StoreProvider>
         <Hero />
+        <StatsStrip />
         <FeaturedSection products={mapped} />
         <WhyChoose />
+        <TestimonialsCarousel />
         <ProductCatalog products={mapped} />
+        <ContactStrip />
       </StoreProvider>
     </div>
   );
